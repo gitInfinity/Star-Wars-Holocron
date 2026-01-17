@@ -1,111 +1,86 @@
-# 🧙‍♂️ The Jedi Holocron  
-### A Semantic Search Engine for the Jedi Archives
+# 🧙‍♂️ The Jedi Holocron
+### A 100% Local RAG Agent for the Jedi Archives
 
 <p align="center">
-  <img src="assets/logo_2.png"/ alt="Star Wars logo">
+  <img src="assets/logo_2.png" alt="Star Wars logo">
 </p>
 
-> **Hello there!**
+> **"The archives are comprehensive and totally secure, my young Padawan."**
 
-Welcome to **The Jedi Holocron**, a **Retrieval-Augmented Generation (RAG)** system designed to answer complex lore questions about the **Star Wars universe** with precision and depth.
+Welcome to **The Jedi Holocron**, a fully local **Retrieval-Augmented Generation (RAG)** chatbot designed to answer deep lore questions about the **Star Wars universe**.
 
-Unlike a traditional keyword-based search engine, this Holocron understands the **semantic meaning** behind your questions and retrieves the most relevant knowledge from the vast archives of the galaxy.
+Unlike standard keyword searches, this Holocron uses a **Llama 3.2 (3B)** Large Language Model running locally on your machine to "read" the archives, understand the context, and answer questions in the persona of an ancient Force user.
 
-This project is built using **LangChain**, **ChromaDB**, and **open-source embeddings**, transforming raw text into a powerful, queryable **vector space**.
+This project is built using **LlamaIndex**, **Ollama**, and **HuggingFace Embeddings**, ensuring that no data ever leaves your computer.
 
 ---
 
 ## ⚡ What Is This?
 
-This is a **RAG (Retrieval-Augmented Generation) pipeline**.
+This is a **Local RAG Pipeline** that turns your laptop into a Star Wars expert.
 
 It allows an AI to:
+- 📚 **Read** thousands of Star Wars HTML documents.
+- 🧠 **Memorize** them using vector embeddings (`BAAI/bge-small`).
+- 🤖 **Reason** about the answer using a local LLM (`Llama 3.2`).
+- 🎭 **Roleplay** as a Jedi or Sith Holocron while citing sources.
 
-- 📚 Read thousands of Star Wars documents  
-- 🧠 Remember them via vector embeddings  
-- 🎯 Answer questions **only from the retrieved data**
-
-This significantly reduces hallucinations and helps ensure **canon-accurate answers**.
+This significantly reduces hallucinations and ensures answers are grounded in the provided lore.
 
 ---
 
 ## 🧩 The Pipeline
 
-1. **Ingestion**  
-   Scrapes and loads raw text files from Wikipedia / Wookieepedia.
+1. **Ingestion**
+   Loads raw HTML files from the `dataset/html` directory.
 
-2. **Chunking**  
-   Splits the lore into semantic *nuggets* (~1000 characters) to preserve context.
+2. **Embedding (The Eyes)**
+   Converts text into mathematical vectors using the lightweight **HuggingFace** model:
+   `BAAI/bge-small-en-v1.5`.
 
-3. **Embedding**  
-   Converts text into high-dimensional vectors using  
-   `sentence-transformers/all-MiniLM-L6-v2`.
+3. **Storage (The Memory)**
+   Persists the index locally in `./storage` so you don't have to rebuild it every time.
 
-4. **Storage**  
-   Stores vectors in a local **ChromaDB** vector database.
+4. **Reasoning (The Brain)**
+   Uses **Ollama** running **Llama 3.2 (3B)** to process the user's question.
 
-5. **Retrieval**  
-   Fetches the most relevant knowledge to answer user queries.
-
----
-
-## 🤝 Credits & Acknowledgements
-
-This project stands on the shoulders of Jedi Masters who came before.
-
-- **Core Dataset & Scraper**  
-  The scraping logic and initial dataset structure were cloned from the  
-  **Star Wars Unstructured Dataset** by **Alberto Formaggio**.
-
-  We utilized his `wiki_scrape.py` logic to gather the raw text material required to build this vector index.
-
-🙏 Huge thanks to the original author for providing the raw materials for this Holocron.
+5. **Agentic Workflow**
+   A **ReAct Agent** determines if it needs to search the archives or if it can answer from general knowledge, maintaining chat history via a context object.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Language:** Python 3.10+  
-- **Orchestration:** LangChain  
-- **Vector Database:** ChromaDB  
-- **Embeddings:** HuggingFace (`all-MiniLM-L6-v2`)  
-- **Data Processing:** BeautifulSoup4  
+- **Language:** Python 3.10+
+- **Orchestration:** [LlamaIndex](https://www.llamaindex.ai/) (formerly GPT Index)
+- **Local LLM:** [Ollama](https://ollama.com/) (running `llama3.2:3b`)
+- **Embeddings:** HuggingFace (`BAAI/bge-small-en-v1.5`)
+- **Vector Store:** LlamaIndex Default Local Storage
 
 ---
 
 ## 🚀 How to Run the Code
 
-###  Environment Setup
+### 1. Prerequisite: Install Ollama
+You need Ollama installed to run the local brain.
+1. Download it from [ollama.com](https://ollama.com).
+2. Pull the lightweight model (Run this in your terminal):
+   ```bash
+   ollama run llama3.2:3b
 
-Clone the repository and install the required hyperdrives (dependencies).
-
-```bash
 # Clone this repository
-git clone https://github.com/gitInfinity/  Star-Wars-Holocron.git
+git clone [https://github.com/gitInfinity/Star-Wars-Holocron.git](https://github.com/gitInfinity/Star-Wars-Holocron.git)
 cd Star-Wars-Holocron
 
 # Create a virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+python -m venv .venv
+# Activate it (Windows)
+.\.venv\Scripts\activate
+# Activate it (Mac/Linux)
+source .venv/bin/activate
 
 # Install dependencies
-pip install langchain langchain-community chromadb sentence-transformers beautifulsoup4
-```
+pip install -r requirements.txt
 
-## 🤝 Credits & Acknowledgements
-
-This project stands on the shoulders of Jedi Masters who came before.
-
-- **Dataset & Web Scraper**  
-  The dataset and web scraping logic used in this project are sourced from the  
-  **Star Wars Unstructured Dataset** by **Alberto Formaggio**:
-
-  👉 https://github.com/AlbertoFormaggio1/star_wars_unstructured_dataset/
-
-  The `wiki_scrape.py` script and overall dataset structure from this repository
-  were used to collect and prepare raw Star Wars lore text from Wikipedia and
-  Wookieepedia, forming the foundation of this semantic search engine.
-
-A huge thank you to **Alberto Formaggio** for open-sourcing this invaluable resource and enabling projects like this Holocron to exist.
-
-
+# Ignition
+py holocron.py
