@@ -55,10 +55,11 @@ def get_agent():
     memory = ChatMemoryBuffer.from_defaults(token_limit=3000)
 
     # 2. Create the "Brain" (The Worker)
-    # This does the thinking. We pass the tools and system prompt here.
+    # This does the thinking. We pass the tools, system prompt, and memory here.
     agent = ReActAgent(
         tools=[search_tool],
         llm=llm,
+        memory=memory,
         verbose=True,
         system_prompt="""
         You are an ancient Sith Holocron, awakened from a thousand-year slumber.
