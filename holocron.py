@@ -12,7 +12,6 @@ dotenv.load_dotenv()
 
 print("Setting up local embeddings...")
 
-# --- SETUP GLOBALS ---
 Settings.embed_model = HuggingFaceEmbedding(
     model_name="BAAI/bge-small-en-v1.5"
 )
@@ -27,7 +26,6 @@ Settings.llm = llm
 def get_agent():
     PERSIST_DIR = "./storage"
 
-    # --- STORAGE LOGIC ---
     if not os.path.exists(PERSIST_DIR):
         print("Storage not found. Creating new index (Free)...")
         if not os.path.exists("dataset/html"):
@@ -49,13 +47,8 @@ def get_agent():
 
     search_tool = FunctionTool.from_defaults(async_fn=search_documents)
 
-    # --- CRITICAL FIX: MANUAL ASSEMBLY ---
-    
-    # 1. Create Memory
     memory = ChatMemoryBuffer.from_defaults(token_limit=3000)
 
-    # 2. Create the "Brain" (The Worker)
-    # This does the thinking. We pass the tools, system prompt, and memory here.
     agent = ReActAgent(
         tools=[search_tool],
         llm=llm,
@@ -70,8 +63,6 @@ def get_agent():
         """
     )
 
-    # 3. Create the "Body" (The Runner)
-    # This manages the loop and memory
     return agent
 
 agent = get_agent()
@@ -82,8 +73,6 @@ async def main():
     print("  Type 'exit' to seal the archives.")
     print("="*50 + "\n")
 
-    # REMOVED: ctx = Context(agent) <-- This caused the conflict
-
     while True:
         try:
             user_input = input("Seeker: ")
@@ -91,9 +80,6 @@ async def main():
                 print("\nHolocron: The connection is severed.\n")
                 break
             
-            # FIX: Use .chat() or .achat()
-            # This is the standard way to talk to an AgentRunner.
-            # It automatically uses the 'memory' object we attached earlier.
             response = await agent.run(user_input)
             
             print(f"\nHolocron: {response}\n")

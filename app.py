@@ -5,11 +5,9 @@ import nest_asyncio
 import threading
 from holocron import get_agent
 
-# --- 1. CONFIGURATION & SETUP ---
-# Fixes "RuntimeError: This event loop is already running" in Streamlit
+
 nest_asyncio.apply()
 
-# Load environment variables
 dotenv.load_dotenv()
 
 st.set_page_config(
@@ -18,7 +16,6 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- 3. SESSION STATE (Chat Memory & Agent) ---
 # Create a new agent instance per session so each user has their own memory
 # Each call to get_agent() creates a new agent with a new ChatMemoryBuffer
 if "agent" not in st.session_state:
@@ -29,7 +26,6 @@ if "messages" not in st.session_state:
         {"role": "assistant", "content": "I am the Sith Holocron. Ask, if you are strong enough to hear the truth."}
     ]
 
-# --- 4. UI: SIDEBAR ---
 with st.sidebar:
     st.image("https://upload.wikimedia.org/wikipedia/commons/6/6c/Star_Wars_Logo.svg", width=200)
     st.title("Sith Archives")
@@ -45,7 +41,6 @@ with st.sidebar:
         st.session_state.agent = get_agent()
         st.rerun()
 
-# --- 5. UI: CHAT INTERFACE ---
 st.title("⚡ The Sith Holocron")
 
 # Display previous chat messages
